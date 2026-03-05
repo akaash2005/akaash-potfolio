@@ -184,13 +184,13 @@ function Cursor() {
 
   return (
     <>
-      <div ref={dotRef} style={{
+      <div id="cursor-dot" ref={dotRef} style={{
         position:"fixed", width:9, height:9, borderRadius:"50%",
         background:T.cyan, pointerEvents:"none", zIndex:9999,
         transition:"transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s",
         mixBlendMode:"screen",
       }}/>
-      <div ref={ringRef} style={{
+      <div id="cursor-ring" ref={ringRef} style={{
         position:"fixed", width:40, height:40, borderRadius:"50%",
         border:"1.5px solid", borderColor:T.cyan+"55",
         pointerEvents:"none", zIndex:9998,
@@ -443,7 +443,7 @@ function CircleBtn({ label, icon, href, color, delay, show }) {
     return () => cancelAnimationFrame(rafRef.current);
   }, [hov]);
 
-  const size = "clamp(122px,14vw,158px)";
+  const size = "clamp(88px,12vw,155px)";
   return (
     <a href={href}
       onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
@@ -555,23 +555,8 @@ function ProjectsSection({ projRef, projVis }) {
       </div>
 
       {/* Spotlight card + nav */}
-      <div style={{display:"grid", gridTemplateColumns:"44px 1fr 44px", gap:"1.2rem", alignItems:"center"}}>
-
-        {/* Prev arrow */}
-        <button onClick={() => go(-1)} disabled={total <= 1} style={{
-          width:44, height:44, borderRadius:"50%",
-          border:`1px solid ${total>1 ? col+"40" : T.border}`,
-          background: total>1 ? col+"0c" : "transparent",
-          color: total>1 ? col : T.muted,
-          fontSize:18, cursor:"none", display:"flex", alignItems:"center", justifyContent:"center",
-          transition:"all 0.25s", flexShrink:0,
-        }}
-        onMouseEnter={e=>{ if(total>1){e.currentTarget.style.background=col+"20";e.currentTarget.style.boxShadow=`0 0 20px ${col}25`;}}}
-        onMouseLeave={e=>{ e.currentTarget.style.background=total>1?col+"0c":"transparent";e.currentTarget.style.boxShadow="none";}}>
-          ‹
-        </button>
-
-        {/* Featured card */}
+      <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
+        {/* Card */}
         <div style={{
           background: T.surface,
           border:`1px solid ${col}35`,
@@ -628,32 +613,47 @@ function ProjectsSection({ projRef, projVis }) {
           </div>
         </div>
 
-        {/* Next arrow */}
-        <button onClick={() => go(1)} disabled={total <= 1} style={{
-          width:44, height:44, borderRadius:"50%",
-          border:`1px solid ${total>1 ? col+"40" : T.border}`,
-          background: total>1 ? col+"0c" : "transparent",
-          color: total>1 ? col : T.muted,
-          fontSize:18, cursor:"none", display:"flex", alignItems:"center", justifyContent:"center",
-          transition:"all 0.25s", flexShrink:0,
-        }}
-        onMouseEnter={e=>{ if(total>1){e.currentTarget.style.background=col+"20";e.currentTarget.style.boxShadow=`0 0 20px ${col}25`;}}}
-        onMouseLeave={e=>{ e.currentTarget.style.background=total>1?col+"0c":"transparent";e.currentTarget.style.boxShadow="none";}}>
-          ›
-        </button>
-      </div>
+        {/* Prev / Next row — works on all screen sizes */}
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:"0.5rem"}}>
+          <button onClick={() => go(-1)} disabled={total <= 1} style={{
+            width:42, height:42, borderRadius:"50%",
+            border:`1px solid ${total>1 ? col+"40" : T.border}`,
+            background: total>1 ? col+"0c" : "transparent",
+            color: total>1 ? col : T.muted,
+            fontSize:20, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
+            transition:"all 0.25s", flexShrink:0,
+          }}
+          onMouseEnter={e=>{ if(total>1){e.currentTarget.style.background=col+"22";e.currentTarget.style.boxShadow=`0 0 20px ${col}30`;}}}
+          onMouseLeave={e=>{ e.currentTarget.style.background=total>1?col+"0c":"transparent";e.currentTarget.style.boxShadow="none";}}>
+            ‹
+          </button>
 
-      {/* Dot indicators */}
-      <div style={{display:"flex",justifyContent:"center",gap:8,marginTop:"1.4rem"}}>
-        {filtered.map((_,i) => (
-          <button key={i} onClick={()=>{setDir(i>idx?1:-1);setIdx(i);}} style={{
-            width: i===idx ? 20 : 7, height:7, borderRadius:999,
-            background: i===idx ? col : T.muted,
-            border:"none", cursor:"none", padding:0,
-            transition:"all 0.3s",
-            boxShadow: i===idx ? `0 0 10px ${col}` : "none",
-          }}/>
-        ))}
+          {/* Dot indicators */}
+          <div style={{display:"flex",gap:8}}>
+            {filtered.map((_,i) => (
+              <button key={i} onClick={()=>{setDir(i>idx?1:-1);setIdx(i);}} style={{
+                width: i===idx ? 20 : 7, height:7, borderRadius:999,
+                background: i===idx ? col : T.muted,
+                border:"none", cursor:"pointer", padding:0,
+                transition:"all 0.3s",
+                boxShadow: i===idx ? `0 0 10px ${col}` : "none",
+              }}/>
+            ))}
+          </div>
+
+          <button onClick={() => go(1)} disabled={total <= 1} style={{
+            width:42, height:42, borderRadius:"50%",
+            border:`1px solid ${total>1 ? col+"40" : T.border}`,
+            background: total>1 ? col+"0c" : "transparent",
+            color: total>1 ? col : T.muted,
+            fontSize:20, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center",
+            transition:"all 0.25s", flexShrink:0,
+          }}
+          onMouseEnter={e=>{ if(total>1){e.currentTarget.style.background=col+"22";e.currentTarget.style.boxShadow=`0 0 20px ${col}30`;}}}
+          onMouseLeave={e=>{ e.currentTarget.style.background=total>1?col+"0c":"transparent";e.currentTarget.style.boxShadow="none";}}>
+            ›
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -700,10 +700,56 @@ export default function Portfolio() {
         @keyframes drift2{0%,100%{transform:translate(0,0);}50%{transform:translate(35px,-55px);}}
         @keyframes drift3{0%,100%{transform:translate(0,0);}50%{transform:translate(55px,-30px);}}
 
-        @media(max-width:680px){
-          .about-grid,.skills-inner,.contact-inner{grid-template-columns:1fr!important;}
+        /* ── Base section padding ── */
+        .section-inner{
+          max-width:1080px;
+          margin:0 auto;
+          padding:clamp(3rem,7vw,6rem) clamp(1.2rem,5vw,4rem);
+        }
+
+        /* ── Two-col grids ── */
+        .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;}
+        .contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
+        .exp-row{display:grid;grid-template-columns:1fr auto;gap:0.4rem 2rem;}
+
+        /* ── Skill grid ── */
+        .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem;}
+
+        /* ── Hero circles ── */
+        .circles-row{display:flex;gap:clamp(0.8rem,3vw,2.5rem);flex-wrap:wrap;justify-content:center;align-items:center;}
+
+        /* ── Tablet 900px ── */
+        @media(max-width:900px){
+          .about-grid{grid-template-columns:1fr!important;gap:2.5rem!important;}
+          .contact-inner{grid-template-columns:1fr!important;gap:2rem!important;}
+          .exp-row{grid-template-columns:1fr!important;}
+          .exp-period{text-align:left!important;margin-top:2px;}
+        }
+
+        /* ── Mobile 600px ── */
+        @media(max-width:600px){
+          body{cursor:auto!important;}
+          #cursor-dot,#cursor-ring{display:none!important;}
+
+          .about-grid{grid-template-columns:1fr!important;gap:2rem!important;}
+          .contact-inner{grid-template-columns:1fr!important;gap:1.5rem!important;}
           .exp-row{grid-template-columns:1fr!important;}
           .exp-period{text-align:left!important;}
+          .skill-grid{grid-template-columns:1fr 1fr!important;}
+
+          .section-inner{padding:2.5rem 1.1rem!important;}
+        }
+
+        /* ── Small mobile 420px ── */
+        @media(max-width:420px){
+          .skill-grid{grid-template-columns:1fr!important;}
+          .circles-row{gap:0.7rem!important;}
+        }
+
+        /* ── Touch devices — restore cursor ── */
+        @media(hover:none){
+          body{cursor:auto!important;}
+          #cursor-dot,#cursor-ring{display:none!important;}
         }
       `}</style>
 
@@ -781,9 +827,8 @@ export default function Portfolio() {
         </div>
 
         {/* ── 3 circles ── */}
-        <div style={{display:"flex",gap:"clamp(1rem,3.5vw,2.5rem)",
-          flexWrap:"wrap",justifyContent:"center",alignItems:"center",
-          animation:"fadeUp 0.6s ease 1.1s both",opacity:0}}>
+        <div className="circles-row"
+          style={{animation:"fadeUp 0.6s ease 1.1s both",opacity:0}}>
           {circles.map(c => <CircleBtn key={c.label} {...c} show={circlesOn}/>)}
         </div>
 
@@ -800,8 +845,7 @@ export default function Portfolio() {
 
       {/* ── ABOUT ── */}
       <Section id="about" tag="01 — Who I Am" title="About Me" accent={T.cyan}>
-        <div className="about-grid" style={{display:"grid",
-          gridTemplateColumns:"1fr 1fr",gap:"4rem",alignItems:"center"}}>
+        <div className="about-grid">
           <div>
             {["I'm a pre-final year Computer Science student at VIT Chennai, specialising in AI & Robotics — building at the intersection of software, intelligence, and hardware.",
               "I gravitate towards real-time applications: whether it's a responsive web platform or a cross-platform mobile app, I care about systems that feel instant and alive. Beyond the screen, I'm deeply into embedded systems and love bridging the gap between code and physical hardware.",
@@ -866,7 +910,7 @@ export default function Portfolio() {
         </div>
 
         {/* Skill group cards */}
-        <div ref={skillRef} style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"1.2rem"}}>
+        <div ref={skillRef} className="skill-grid">
           {[
             { cat:"Frontend",  color:T.cyan,    icon:"⬡" },
             { cat:"Backend",   color:T.violet,  icon:"◈" },
@@ -921,8 +965,7 @@ export default function Portfolio() {
           {EXPERIENCE.map((ex,i)=>(
             <div key={ex.role} className="exp-row"
               style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:14,
-                padding:"1.8rem 2rem",display:"grid",
-                gridTemplateColumns:"1fr auto",gap:"0.4rem 2rem",
+                padding:"1.8rem 2rem",
                 opacity:expVis?1:0,transform:expVis?"translateX(0)":"translateX(-28px)",
                 transition:`opacity 0.6s ${i*0.14}s,transform 0.6s ${i*0.14}s,border-color 0.3s,box-shadow 0.3s`,
                 cursor:"none", position:"relative", overflow:"hidden"}}
@@ -955,8 +998,7 @@ export default function Portfolio() {
       <Section id="contact" tag="05 — Let's Talk" title="Contact" accent={T.pink}>
         <div ref={contactRef} className="contact-inner"
           style={{background:T.surface,border:`1px solid ${T.pink}30`,borderRadius:22,
-            padding:"clamp(2rem,5vw,3.5rem)",display:"grid",
-            gridTemplateColumns:"1fr 1fr",gap:"3rem",alignItems:"center",
+            padding:"clamp(2rem,5vw,3.5rem)",
             opacity:contactVis?1:0,transform:contactVis?"none":"translateY(30px)",
             transition:"opacity 0.7s,transform 0.7s",
             boxShadow:`0 0 80px ${T.pink}12, inset 0 0 40px ${T.pink}05`}}>
