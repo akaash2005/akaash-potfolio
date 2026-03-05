@@ -714,8 +714,8 @@ export default function Portfolio() {
       {/* ── HERO ── */}
       <div style={{position:"relative",zIndex:2,minHeight:"100vh",
         display:"flex",flexDirection:"column",alignItems:"center",
-        justifyContent:"center",padding:"clamp(2rem,6vw,4rem) 2rem",
-        paddingBottom:"clamp(5rem,10vw,8rem)"}}>
+        justifyContent:"center",padding:"clamp(1rem,3vw,2rem) 2rem",
+        paddingBottom:"clamp(2rem,5vw,4rem)"}}>
 
         {/* hero glow */}
         <div style={{position:"absolute",top:"40%",left:"50%",transform:"translate(-50%,-50%)",
@@ -729,7 +729,7 @@ export default function Portfolio() {
         {/* ── Name + bio block ── */}
         <div style={{textAlign:"center",
           animation:"fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.3s both",
-          position:"relative",zIndex:1,marginBottom:"clamp(2.5rem,5vw,4rem)"}}>
+          position:"relative",zIndex:1,marginBottom:"clamp(1.2rem,3vw,2rem)"}}>
 
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",
             gap:12,marginBottom:22}}>
@@ -744,19 +744,19 @@ export default function Portfolio() {
           {/* Name split across two lines so long name looks intentional */}
           <h1 style={{
             fontFamily:"Syne",fontWeight:800,lineHeight:1,
-            fontSize:"clamp(2.4rem,7vw,5.5rem)",letterSpacing:"-0.03em",
+            fontSize:"clamp(1.8rem,5vw,4rem)",letterSpacing:"-0.03em",
             background:`linear-gradient(145deg, #fff 10%, ${T.cyan} 48%, ${T.violet} 88%)`,
             WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",
-            marginBottom:28,
+            marginBottom:20,
             filter:`drop-shadow(0 0 50px ${T.cyan}18)`,
           }}>
             Akaash Venkata<br/>
-            <span style={{fontSize:"clamp(2.8rem,8.5vw,6.5rem)",letterSpacing:"-0.035em"}}>
+            <span style={{fontSize:"clamp(2.2rem,6vw,4.8rem)",letterSpacing:"-0.035em"}}>
               Peddhibhotla
             </span>
           </h1>
 
-          <p style={{fontSize:"clamp(0.9rem,1.8vw,1.06rem)",lineHeight:1.82,
+          <p style={{fontSize:"clamp(0.85rem,1.5vw,1rem)",lineHeight:1.75,
             color:T.sub,maxWidth:480,margin:"0 auto",fontWeight:300}}>
             CS undergrad at VIT Chennai, specialising in{" "}
             <span style={{color:T.text,fontWeight:400}}>AI & Robotics</span>
@@ -768,7 +768,7 @@ export default function Portfolio() {
         {/* ── Divider with "explore" label ── */}
         <div style={{
           display:"flex",alignItems:"center",gap:16,
-          marginBottom:"clamp(2rem,4vw,3rem)",
+          marginBottom:"clamp(1rem,2.5vw,2rem)",
           animation:"fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.9s both",
           opacity:0,
         }}>
