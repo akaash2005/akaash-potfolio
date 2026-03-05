@@ -801,7 +801,7 @@ export default function Portfolio() {
       {/* ── ABOUT ── */}
       <Section id="about" tag="01 — Who I Am" title="About Me" accent={T.cyan}>
         <div className="about-grid" style={{display:"grid",
-          gridTemplateColumns:"1fr 1fr",gap:"3.5rem",alignItems:"center"}}>
+          gridTemplateColumns:"1fr 1fr",gap:"4rem",alignItems:"center"}}>
           <div>
             {["I'm a pre-final year Computer Science student at VIT Chennai, specialising in AI & Robotics — building at the intersection of software, intelligence, and hardware.",
               "I gravitate towards real-time applications: whether it's a responsive web platform or a cross-platform mobile app, I care about systems that feel instant and alive. Beyond the screen, I'm deeply into embedded systems and love bridging the gap between code and physical hardware.",
@@ -809,6 +809,42 @@ export default function Portfolio() {
               .map((txt,i)=>(
               <p key={i} style={{color:T.sub,lineHeight:1.88,fontWeight:400,
                 fontSize:"0.98rem",marginBottom:16}}>{txt}</p>
+            ))}
+          </div>
+
+          {/* Right side — info tiles */}
+          <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
+            {[
+              { label:"Degree",      val:"B.Tech Computer Science",  icon:"◈", color:T.cyan    },
+              { label:"Specialisation", val:"AI & Robotics",         icon:"✦", color:T.violet  },
+              { label:"University",  val:"VIT Chennai",               icon:"⬡", color:T.emerald },
+              { label:"Year",        val:"Pre-Final Year",            icon:"◎", color:T.amber   },
+              { label:"Interests",   val:"Real-time Apps · Embedded Systems · ML", icon:"⬢", color:T.pink },
+            ].map((item,i)=>(
+              <div key={i} style={{
+                display:"flex", alignItems:"center", gap:"1rem",
+                background:T.surface, border:`1px solid ${item.color}25`,
+                borderRadius:12, padding:"0.9rem 1.2rem",
+                transition:"all 0.3s", cursor:"none",
+              }}
+              onMouseEnter={e=>{
+                e.currentTarget.style.borderColor=item.color+"55";
+                e.currentTarget.style.transform="translateX(5px)";
+                e.currentTarget.style.boxShadow=`0 0 20px ${item.color}15`;
+              }}
+              onMouseLeave={e=>{
+                e.currentTarget.style.borderColor=item.color+"25";
+                e.currentTarget.style.transform="none";
+                e.currentTarget.style.boxShadow="none";
+              }}>
+                <span style={{fontSize:16,color:item.color,
+                  filter:`drop-shadow(0 0 6px ${item.color})`,flexShrink:0}}>{item.icon}</span>
+                <div>
+                  <div style={{fontSize:10,letterSpacing:"0.15em",textTransform:"uppercase",
+                    color:item.color,opacity:0.8,marginBottom:2}}>{item.label}</div>
+                  <div style={{fontSize:13,color:T.text,fontWeight:500}}>{item.val}</div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
