@@ -399,28 +399,44 @@ function useReveal(threshold=0.13) {
   return [ref, vis];
 }
 
+// ── useWindowWidth ────────────────────────────────────────────────────────────
+function useWindowWidth() {
+  const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
+  useEffect(() => {
+    const fn = () => setW(window.innerWidth);
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
+  }, []);
+  return w;
+}
+
 // ── Section ───────────────────────────────────────────────────────────────────
 function Section({ id, tag, title, accent=T.cyan, children }) {
   const [ref, vis] = useReveal();
+  const w = useWindowWidth();
+  const mob = w < 600;
   return (
     <section id={id} ref={ref} style={{
       position:"relative", zIndex:2,
       maxWidth:1080, margin:"0 auto",
-      padding:"clamp(4rem,8vw,7rem) clamp(1.5rem,6vw,4rem)",
+      padding: mob ? "3rem 1.2rem" : "clamp(4rem,8vw,7rem) clamp(1.5rem,6vw,4rem)",
       borderTop:`1px solid ${accent}25`,
+      boxSizing:"border-box", width:"100%",
     }}>
       <div style={{
         opacity:vis?1:0, transform:vis?"none":"translateY(22px)",
-        transition:"opacity 0.7s, transform 0.7s", marginBottom:"2.8rem",
+        transition:"opacity 0.7s, transform 0.7s", marginBottom:"2.4rem",
       }}>
-        <p style={{ fontSize:11, letterSpacing:"0.24em", textTransform:"uppercase",
-          color:accent, marginBottom:10, opacity:0.85 }}>{tag}</p>
+        <p style={{ fontSize:11, letterSpacing:"0.22em", textTransform:"uppercase",
+          color:accent, marginBottom:10, opacity:0.9 }}>{tag}</p>
+        {/* solid colour heading — no webkit gradient tricks that break on mobile */}
         <h2 style={{
-          fontFamily:"Syne", fontSize:"clamp(2rem,4vw,2.8rem)", fontWeight:700,
-          letterSpacing:"-0.02em", marginBottom:14,
-          background:`linear-gradient(135deg, ${T.text} 40%, ${accent} 100%)`,
-          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text",
-        }}>{title}</h2>
+          fontFamily:"Syne", fontSize: mob ? "1.9rem" : "clamp(2rem,4vw,2.8rem)",
+          fontWeight:700, letterSpacing:"-0.02em", marginBottom:14, color: T.text,
+        }}>
+          <span style={{ color: accent }}>{title.split(" ")[0]}</span>
+          {title.includes(" ") ? " " + title.split(" ").slice(1).join(" ") : ""}
+        </h2>
         <div style={{ width:44, height:2, borderRadius:999,
           background:`linear-gradient(to right, ${accent}, transparent)` }}/>
       </div>
@@ -499,7 +515,7 @@ function CircleBtn({ label, icon, href, color, delay, show }) {
 // ── Projects Section — Spotlight Viewer ──────────────────────────────────────
 const CAT_COLORS = { Mobile:T.pink, Web:T.cyan, "AI & ML":T.emerald, Hardware:T.amber };
 
-function ProjectsSection({ projRef, projVis }) {
+function ProjectsSection({ projRef, projVis, mob }) {
   const cats = Array.from(new Set(PROJECTS.map(p => p.cat)));
   const [active, setActive] = useState(cats[0]);
   const [idx, setIdx] = useState(0);
@@ -560,7 +576,7 @@ function ProjectsSection({ projRef, projVis }) {
         <div style={{
           background: T.surface,
           border:`1px solid ${col}35`,
-          borderRadius:20, padding:"2.4rem",
+          borderRadius:20, padding: mob ? "1.4rem" : "2.4rem",
           position:"relative", overflow:"hidden",
           opacity: visible ? 1 : 0,
           transform: visible ? "translateX(0) scale(1)" : `translateX(${dir * 30}px) scale(0.98)`,
@@ -669,6 +685,9 @@ export default function Portfolio() {
   const [skillRef,   skillVis]   = useReveal();
   const [expRef,     expVis]     = useReveal();
   const [contactRef, contactVis] = useReveal();
+  const w = useWindowWidth();
+  const mob  = w < 600;   // phone
+  const tab  = w < 900;   // tablet
 
   useEffect(() => {
     const t = setTimeout(() => setCirclesOn(true), 1600);
@@ -687,70 +706,19 @@ export default function Portfolio() {
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         body{background:${T.bg};color:${T.text};font-family:'DM Sans',sans-serif;
-             overflow-x:hidden;cursor:none;}
+             overflow-x:hidden;cursor:${mob?"auto":"none"};}
         ::selection{background:${T.cyan}28;color:${T.text};}
         ::-webkit-scrollbar{width:4px;}
         ::-webkit-scrollbar-track{background:${T.bg};}
         ::-webkit-scrollbar-thumb{background:${T.muted};border-radius:99px;}
         a{color:inherit;}
+        img,svg,canvas{max-width:100%;}
 
         @keyframes fadeUp{from{opacity:0;transform:translateY(32px);}to{opacity:1;transform:none;}}
         @keyframes scrollPulse{0%,100%{transform:scaleY(1);opacity:.5;}50%{transform:scaleY(.35);opacity:.15;}}
         @keyframes drift1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-45px,35px) scale(1.08);}}
         @keyframes drift2{0%,100%{transform:translate(0,0);}50%{transform:translate(35px,-55px);}}
         @keyframes drift3{0%,100%{transform:translate(0,0);}50%{transform:translate(55px,-30px);}}
-
-        /* ── Base section padding ── */
-        .section-inner{
-          max-width:1080px;
-          margin:0 auto;
-          padding:clamp(3rem,7vw,6rem) clamp(1.2rem,5vw,4rem);
-        }
-
-        /* ── Two-col grids ── */
-        .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;}
-        .contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;}
-        .exp-row{display:grid;grid-template-columns:1fr auto;gap:0.4rem 2rem;}
-
-        /* ── Skill grid ── */
-        .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem;}
-
-        /* ── Hero circles ── */
-        .circles-row{display:flex;gap:clamp(0.8rem,3vw,2.5rem);flex-wrap:wrap;justify-content:center;align-items:center;}
-
-        /* ── Tablet 900px ── */
-        @media(max-width:900px){
-          .about-grid{grid-template-columns:1fr!important;gap:2.5rem!important;}
-          .contact-inner{grid-template-columns:1fr!important;gap:2rem!important;}
-          .exp-row{grid-template-columns:1fr!important;}
-          .exp-period{text-align:left!important;margin-top:2px;}
-        }
-
-        /* ── Mobile 600px ── */
-        @media(max-width:600px){
-          body{cursor:auto!important;}
-          #cursor-dot,#cursor-ring{display:none!important;}
-
-          .about-grid{grid-template-columns:1fr!important;gap:2rem!important;}
-          .contact-inner{grid-template-columns:1fr!important;gap:1.5rem!important;}
-          .exp-row{grid-template-columns:1fr!important;}
-          .exp-period{text-align:left!important;}
-          .skill-grid{grid-template-columns:1fr 1fr!important;}
-
-          .section-inner{padding:2.5rem 1.1rem!important;}
-        }
-
-        /* ── Small mobile 420px ── */
-        @media(max-width:420px){
-          .skill-grid{grid-template-columns:1fr!important;}
-          .circles-row{gap:0.7rem!important;}
-        }
-
-        /* ── Touch devices — restore cursor ── */
-        @media(hover:none){
-          body{cursor:auto!important;}
-          #cursor-dot,#cursor-ring{display:none!important;}
-        }
       `}</style>
 
       <Cursor/>
@@ -787,17 +755,18 @@ export default function Portfolio() {
               background:`linear-gradient(to left,transparent,${T.cyan})`}}/>
           </div>
 
-          {/* Name split across two lines so long name looks intentional */}
           <h1 style={{
-            fontFamily:"Syne",fontWeight:800,lineHeight:1,
-            fontSize:"clamp(1.8rem,5vw,4rem)",letterSpacing:"-0.03em",
-            background:`linear-gradient(145deg, #fff 10%, ${T.cyan} 48%, ${T.violet} 88%)`,
-            WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",backgroundClip:"text",
+            fontFamily:"Syne", fontWeight:800, lineHeight:1,
+            fontSize: mob ? "clamp(1.6rem,8vw,2.6rem)" : "clamp(1.8rem,5vw,4rem)",
+            letterSpacing:"-0.03em",
+            color: T.text,
             marginBottom:20,
-            filter:`drop-shadow(0 0 50px ${T.cyan}18)`,
           }}>
-            Akaash Venkata<br/>
-            <span style={{fontSize:"clamp(2.2rem,6vw,4.8rem)",letterSpacing:"-0.035em"}}>
+            <span style={{color: T.cyan}}>Akaash Venkata</span><br/>
+            <span style={{
+              fontSize: mob ? "clamp(2rem,10vw,3.2rem)" : "clamp(2.2rem,6vw,4.8rem)",
+              letterSpacing:"-0.035em", color: T.violet,
+            }}>
               Peddhibhotla
             </span>
           </h1>
@@ -827,8 +796,9 @@ export default function Portfolio() {
         </div>
 
         {/* ── 3 circles ── */}
-        <div className="circles-row"
-          style={{animation:"fadeUp 0.6s ease 1.1s both",opacity:0}}>
+        <div style={{display:"flex", gap: mob ? "0.8rem" : "clamp(1rem,3.5vw,2.5rem)",
+          flexWrap:"wrap", justifyContent:"center", alignItems:"center",
+          animation:"fadeUp 0.6s ease 1.1s both", opacity:0}}>
           {circles.map(c => <CircleBtn key={c.label} {...c} show={circlesOn}/>)}
         </div>
 
@@ -845,7 +815,8 @@ export default function Portfolio() {
 
       {/* ── ABOUT ── */}
       <Section id="about" tag="01 — Who I Am" title="About Me" accent={T.cyan}>
-        <div className="about-grid">
+        <div style={{display:"grid", gridTemplateColumns: tab ? "1fr" : "1fr 1fr",
+          gap: tab ? "2rem" : "3.5rem", alignItems:"center"}}>
           <div>
             {["I'm a pre-final year Computer Science student at VIT Chennai, specialising in AI & Robotics — building at the intersection of software, intelligence, and hardware.",
               "I gravitate towards real-time applications: whether it's a responsive web platform or a cross-platform mobile app, I care about systems that feel instant and alive. Beyond the screen, I'm deeply into embedded systems and love bridging the gap between code and physical hardware.",
@@ -855,37 +826,22 @@ export default function Portfolio() {
                 fontSize:"0.98rem",marginBottom:16}}>{txt}</p>
             ))}
           </div>
-
-          {/* Right side — info tiles */}
           <div style={{display:"flex",flexDirection:"column",gap:"1rem"}}>
             {[
-              { label:"Degree",      val:"B.Tech Computer Science",  icon:"◈", color:T.cyan    },
-              { label:"Specialisation", val:"AI & Robotics",         icon:"✦", color:T.violet  },
-              { label:"University",  val:"VIT Chennai",               icon:"⬡", color:T.emerald },
-              { label:"Year",        val:"Pre-Final Year",            icon:"◎", color:T.amber   },
-              { label:"Interests",   val:"Real-time Apps · Embedded Systems · ML", icon:"⬢", color:T.pink },
+              { label:"Degree",         val:"B.Tech Computer Science",              icon:"◈", color:T.cyan    },
+              { label:"Specialisation", val:"AI & Robotics",                        icon:"✦", color:T.violet  },
+              { label:"University",     val:"VIT Chennai",                           icon:"⬡", color:T.emerald },
+              { label:"Year",           val:"Pre-Final Year",                        icon:"◎", color:T.amber   },
+              { label:"Interests",      val:"Real-time Apps · Embedded Systems · ML",icon:"⬢", color:T.pink   },
             ].map((item,i)=>(
-              <div key={i} style={{
-                display:"flex", alignItems:"center", gap:"1rem",
-                background:T.surface, border:`1px solid ${item.color}25`,
-                borderRadius:12, padding:"0.9rem 1.2rem",
-                transition:"all 0.3s", cursor:"none",
-              }}
-              onMouseEnter={e=>{
-                e.currentTarget.style.borderColor=item.color+"55";
-                e.currentTarget.style.transform="translateX(5px)";
-                e.currentTarget.style.boxShadow=`0 0 20px ${item.color}15`;
-              }}
-              onMouseLeave={e=>{
-                e.currentTarget.style.borderColor=item.color+"25";
-                e.currentTarget.style.transform="none";
-                e.currentTarget.style.boxShadow="none";
-              }}>
-                <span style={{fontSize:16,color:item.color,
-                  filter:`drop-shadow(0 0 6px ${item.color})`,flexShrink:0}}>{item.icon}</span>
+              <div key={i} style={{display:"flex",alignItems:"center",gap:"1rem",
+                background:T.surface,border:`1px solid ${item.color}25`,
+                borderRadius:12,padding:"0.9rem 1.2rem",transition:"all 0.3s",cursor:"none"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=item.color+"55";e.currentTarget.style.transform="translateX(5px)";e.currentTarget.style.boxShadow=`0 0 20px ${item.color}15`;}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=item.color+"25";e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
+                <span style={{fontSize:16,color:item.color,filter:`drop-shadow(0 0 6px ${item.color})`,flexShrink:0}}>{item.icon}</span>
                 <div>
-                  <div style={{fontSize:10,letterSpacing:"0.15em",textTransform:"uppercase",
-                    color:item.color,opacity:0.8,marginBottom:2}}>{item.label}</div>
+                  <div style={{fontSize:10,letterSpacing:"0.15em",textTransform:"uppercase",color:item.color,opacity:0.8,marginBottom:2}}>{item.label}</div>
                   <div style={{fontSize:13,color:T.text,fontWeight:500}}>{item.val}</div>
                 </div>
               </div>
@@ -896,7 +852,7 @@ export default function Portfolio() {
 
       {/* ── PROJECTS ── */}
       <Section id="projects" tag="02 — What I've Built" title="Projects" accent={T.violet}>
-        <ProjectsSection projRef={projRef} projVis={projVis}/>
+        <ProjectsSection projRef={projRef} projVis={projVis} mob={mob}/>
       </Section>
 
       {/* ── SKILLS ── */}
@@ -910,7 +866,9 @@ export default function Portfolio() {
         </div>
 
         {/* Skill group cards */}
-        <div ref={skillRef} className="skill-grid">
+        <div ref={skillRef} style={{display:"grid",
+          gridTemplateColumns: mob ? "1fr 1fr" : "repeat(auto-fill,minmax(180px,1fr))",
+          gap:"1.2rem"}}>
           {[
             { cat:"Frontend",  color:T.cyan,    icon:"⬡" },
             { cat:"Backend",   color:T.violet,  icon:"◈" },
@@ -963,9 +921,12 @@ export default function Portfolio() {
       <Section id="experience" tag="04 — Where I've Worked" title="Experience" accent={T.amber}>
         <div ref={expRef} style={{display:"flex",flexDirection:"column",gap:"1.2rem"}}>
           {EXPERIENCE.map((ex,i)=>(
-            <div key={ex.role} className="exp-row"
+            <div key={ex.role}
               style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:14,
-                padding:"1.8rem 2rem",
+                padding: mob ? "1.3rem 1.2rem" : "1.8rem 2rem",
+                display:"grid",
+                gridTemplateColumns: tab ? "1fr" : "1fr auto",
+                gap:"0.4rem 2rem",
                 opacity:expVis?1:0,transform:expVis?"translateX(0)":"translateX(-28px)",
                 transition:`opacity 0.6s ${i*0.14}s,transform 0.6s ${i*0.14}s,border-color 0.3s,box-shadow 0.3s`,
                 cursor:"none", position:"relative", overflow:"hidden"}}
@@ -996,9 +957,11 @@ export default function Portfolio() {
 
       {/* ── CONTACT ── */}
       <Section id="contact" tag="05 — Let's Talk" title="Contact" accent={T.pink}>
-        <div ref={contactRef} className="contact-inner"
+        <div ref={contactRef}
           style={{background:T.surface,border:`1px solid ${T.pink}30`,borderRadius:22,
             padding:"clamp(2rem,5vw,3.5rem)",
+            display:"grid", gridTemplateColumns: tab ? "1fr" : "1fr 1fr",
+            gap: tab ? "2rem" : "3rem", alignItems:"center",
             opacity:contactVis?1:0,transform:contactVis?"none":"translateY(30px)",
             transition:"opacity 0.7s,transform 0.7s",
             boxShadow:`0 0 80px ${T.pink}12, inset 0 0 40px ${T.pink}05`}}>
